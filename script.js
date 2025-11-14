@@ -190,9 +190,22 @@ function saveInventory(items) {
 function renderInventory() {
     const list = document.getElementById('stockList');
     if (!list) return;
-    const items = loadInventory();
+    const allItems = loadInventory();
+    // Only show items that are currently in stock (admin controls full inventory)
+    const inStockItems = allItems
+        .map((it, idx) => ({ ...it, _idx: idx }))
+        .filter(it => Boolean(it.inStock));
+
     list.innerHTML = '';
-    items.forEach((it, idx) => {
+    if (inStockItems.length === 0) {
+        const msg = document.createElement('li');
+        msg.className = 'stock-item';
+        msg.innerHTML = '<div class="meta"><h4>No items currently in stock</h4><div class="muted">Check back or update via the admin panel.</div></div>';
+        list.appendChild(msg);
+        return;
+    }
+
+    inStockItems.forEach((it) => {
         const li = document.createElement('li');
         li.className = 'stock-item';
 
@@ -203,8 +216,8 @@ function renderInventory() {
         meta.appendChild(h);
 
         const badge = document.createElement('span');
-        badge.className = 'badge ' + (it.inStock ? 'in' : 'out');
-        badge.textContent = it.inStock ? 'In Stock' : 'Out of Stock';
+        badge.className = 'badge in';
+        badge.textContent = 'In Stock';
         meta.appendChild(badge);
 
         const controls = document.createElement('div');
@@ -212,11 +225,12 @@ function renderInventory() {
 
         const toggle = document.createElement('button');
         toggle.className = 'toggle-btn';
-        toggle.setAttribute('aria-pressed', String(Boolean(it.inStock)));
-        toggle.textContent = it.inStock ? 'Mark Out' : 'Mark In';
+        toggle.setAttribute('aria-pressed', 'true');
+        toggle.textContent = 'Mark Out';
+        // Use the original inventory index (_idx) so we modify the correct item
         toggle.addEventListener('click', () => {
             const itemsNow = loadInventory();
-            itemsNow[idx].inStock = !itemsNow[idx].inStock;
+            itemsNow[it._idx].inStock = !itemsNow[it._idx].inStock;
             saveInventory(itemsNow);
             renderInventory();
         });
@@ -295,3 +309,85 @@ function applyGalleryMeta(){
         else img.classList.remove('featured');
     });
 }
+
+/* Carousel implementation */
+function initCarousel() {
+    const carousel = document.getElementById('carousel');
+    if (!carousel) return;
+
+    const track = carousel.querySelector('.carousel-track');
+    const slides = Array.from(track.children);
+    const prevBtn = carousel.querySelector('.carousel-btn.prev');
+    const nextBtn = carousel.querySelector('.carousel-btn.next');
+    const dotsContainer = carousel.querySelector('.carousel-dots');
+
+    // create dots
+    slides.forEach((_, i) => {
+        const btn = document.createElement('button');
+        btn.setAttribute('aria-label', 'Go to slide ' + (i+1));
+        if (i === 0) btn.classList.add('active');
+        btn.addEventListener('click', () => moveToSlide(i));
+        dotsContainer.appendChild(btn);
+    });
+
+    let currentIndex = 0;
+    let slideWidth = carousel.querySelector('.carousel-slide').getBoundingClientRect().width;
+    let autoId = null;
+
+    function setSlidePositions() {
+        slideWidth = carousel.querySelector('.carousel-slide').getBoundingClientRect().width;
+    }
+
+    function updateTrack() {
+        track.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+        const dots = Array.from(dotsContainer.children);
+        dots.forEach((d, i) => d.classList.toggle('active', i === currentIndex));
+    }
+
+    function moveToSlide(index) {
+        currentIndex = (index + slides.length) % slides.length;
+        updateTrack();
+    }
+
+    function next() { moveToSlide(currentIndex + 1); }
+    function prev() { moveToSlide(currentIndex - 1); }
+
+    nextBtn && nextBtn.addEventListener('click', () => { next(); resetAuto(); });
+    prevBtn && prevBtn.addEventListener('click', () => { prev(); resetAuto(); });
+
+    // autoplay
+    function startAuto() { if (autoId) clearInterval(autoId); autoId = setInterval(next, 4500); }
+    function stopAuto() { if (autoId) { clearInterval(autoId); autoId = null; } }
+    function resetAuto() { stopAuto(); startAuto(); }
+
+    carousel.addEventListener('mouseenter', stopAuto);
+    carousel.addEventListener('mouseleave', startAuto);
+    carousel.addEventListener('focusin', stopAuto);
+    carousel.addEventListener('focusout', startAuto);
+
+    // keyboard navigation
+    carousel.addEventListener('keydown', (e) => {
+        if (e.key === 'ArrowLeft') prev();
+        if (e.key === 'ArrowRight') next();
+    });
+
+    // touch support (simple swipe)
+    let startX = 0;
+    let isTouch = false;
+    carousel.addEventListener('touchstart', (e) => { isTouch = true; startX = e.touches[0].clientX; stopAuto(); }, { passive: true });
+    carousel.addEventListener('touchmove', (e) => { if (!isTouch) return; const dx = e.touches[0].clientX - startX; }, { passive: true });
+    carousel.addEventListener('touchend', (e) => { if (!isTouch) return; const dx = (e.changedTouches[0].clientX - startX); if (dx > 40) prev(); else if (dx < -40) next(); isTouch = false; startAuto(); });
+
+    // resize handling
+    window.addEventListener('resize', () => { setTimeout(() => { setSlidePositions(); updateTrack(); }, 120); });
+
+    // set initial positions
+    setSlidePositions();
+    updateTrack();
+    startAuto();
+}
+
+// initialize carousel on DOM ready
+document.addEventListener('DOMContentLoaded', () => {
+    initCarousel();
+});

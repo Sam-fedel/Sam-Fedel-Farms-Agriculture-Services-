@@ -4,5 +4,5 @@
 User-agent: *
 Allow: /
 
-# Point crawlers to the sitemap (replace example.com with your domain)
-Sitemap: https://example.com/sitemap.xml
+# Point crawlers to the sitemap
+Sitemap: https://sam-fedel.github.io/Sam-Fedel-Farms-Agriculture-Services-/sitemap.xml

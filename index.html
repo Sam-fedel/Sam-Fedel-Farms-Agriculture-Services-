@@ -11,8 +11,9 @@
         <meta property="og:title" content="Sam Fedel Farms — Sustainable Agriculture, Poultry & Fishery">
         <meta property="og:description" content="Sustainable farming, poultry, fishery and snail rearing services by Sam Fedel Farms in Rivers State.">
         <meta property="og:type" content="website">
-        <meta property="og:url" content="https://example.com/">
-        <meta property="og:image" content="https://example.com/samfedel%20farms/IMG_20251114_172531_679.jpg">
+        <link rel="canonical" href="https://sam-fedel.github.io/Sam-Fedel-Farms-Agriculture-Services-/" />
+        <meta property="og:url" content="https://sam-fedel.github.io/Sam-Fedel-Farms-Agriculture-Services-/">
+        <meta property="og:image" content="https://sam-fedel.github.io/Sam-Fedel-Farms-Agriculture-Services-/samfedel%20farms/IMG_20251114_172531_679.jpg">
         <!-- Twitter Card -->
         <meta name="twitter:card" content="summary_large_image">
         <meta name="twitter:title" content="Sam Fedel Farms">
@@ -33,7 +34,7 @@
                 "addressRegion": "Rivers State",
                 "addressCountry": "NG"
             },
-            "url": "https://example.com/"
+            "url": "https://sam-fedel.github.io/Sam-Fedel-Farms-Agriculture-Services-/"
         }
         </script>
 
@@ -45,6 +46,8 @@
             gtag('js', new Date());
             gtag('config', 'G-XXXXXXXXXX');
         </script>
+        <!-- Google site verification (HTML file exists at site root) -->
+        <meta name="google-site-verification" content="7d8177cdda59d81f" />
     <link rel="stylesheet" href="style.css">
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
 </head>
@@ -60,27 +63,36 @@
         <div class="hero-animation"></div>
     </section>
 
-    <!-- Gallery Section -->
+    <!-- Gallery Section (carousel) -->
     <section id="gallery" class="gallery">
         <h2>Gallery</h2>
-        <p>Photos from the farm — tap to view details.</p>
-        <div class="gallery-grid">
-            <img src="samfedel%20farms/IMG_20251114_172531_679.jpg" alt="Farm image 1">
-            <img src="samfedel%20farms/IMG_20251114_172536_933.jpg" alt="Farm image 2">
-            <img src="samfedel%20farms/IMG_20251114_172541_594.jpg" alt="Farm image 3">
-            <img src="samfedel%20farms/IMG_20251114_172647_624.jpg" alt="Farm image 4">
-            <img src="samfedel%20farms/IMG_20251114_172657_494.jpg" alt="Farm image 5">
-            <img src="samfedel%20farms/IMG_20251114_172707_937.jpg" alt="Farm image 6">
-            <img src="samfedel%20farms/IMG_20251114_172824_421.jpg" alt="Farm image 7">
-            <img src="samfedel%20farms/IMG_20251114_172826_811.jpg" alt="Farm image 8">
-            <img src="samfedel%20farms/IMG_20251114_172828_397.jpg" alt="Farm image 9">
-            <img src="samfedel%20farms/IMG_20251114_172830_876.jpg" alt="Farm image 10">
-            <img src="samfedel%20farms/IMG_20251114_172832_229.jpg" alt="Farm image 11">
-            <img src="samfedel%20farms/IMG_20251114_172833_366.jpg" alt="Farm image 12">
-            <img src="samfedel%20farms/IMG_20251114_173117_712.jpg" alt="Farm image 13">
-            <img src="samfedel%20farms/IMG_20251114_173117_766.jpg" alt="Farm image 14">
-            <img src="samfedel%20farms/IMG_20251114_173123_380.jpg" alt="Farm image 15">
-            <img src="samfedel%20farms/IMG_20251114_173127_579.jpg" alt="Farm image 16">
+        <p>Photos from the farm — use the arrows or dots to navigate.</p>
+
+        <div class="carousel" id="carousel" aria-roledescription="carousel">
+            <button class="carousel-btn prev" aria-label="Previous slide">‹</button>
+            <div class="carousel-track-container">
+                <ul class="carousel-track">
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172531_679.jpg" alt="Farm image 1" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172536_933.jpg" alt="Farm image 2" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172541_594.jpg" alt="Farm image 3" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172647_624.jpg" alt="Farm image 4" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172657_494.jpg" alt="Farm image 5" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172707_937.jpg" alt="Farm image 6" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172824_421.jpg" alt="Farm image 7" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172826_811.jpg" alt="Farm image 8" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172828_397.jpg" alt="Farm image 9" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172830_876.jpg" alt="Farm image 10" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172832_229.jpg" alt="Farm image 11" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_172833_366.jpg" alt="Farm image 12" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_173117_712.jpg" alt="Farm image 13" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_173117_766.jpg" alt="Farm image 14" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_173123_380.jpg" alt="Farm image 15" loading="lazy"></li>
+                    <li class="carousel-slide"><img src="samfedel%20farms/IMG_20251114_173127_579.jpg" alt="Farm image 16" loading="lazy"></li>
+                </ul>
+            </div>
+            <button class="carousel-btn next" aria-label="Next slide">›</button>
+
+            <div class="carousel-dots" role="tablist" aria-label="Select slide"></div>
         </div>
     </section>
 
