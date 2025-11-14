@@ -156,182 +156,10 @@ if (window.matchMedia) {
     else if (mq.addListener) mq.addListener(updateGrass);
 }
 
-/* Inventory / local stock management */
-const INVENTORY_KEY = 'sf_inventory_v1';
-
-// Generate a stable-ish id for inventory items (timestamp + random)
-function generateId(prefix = 'it') {
-    return `${prefix}_${Date.now().toString(36)}_${Math.floor(Math.random() * 9000 + 1000).toString(36)}`;
-}
-
-const defaultInventory = [
-    { id: generateId(), name: 'Yams', quantity: 24, min: 4, inStock: true },
-    { id: generateId(), name: 'Peppers', quantity: 56, min: 8, inStock: true },
-    { id: generateId(), name: 'Fish Fingerlings', quantity: 0, min: 30, inStock: false },
-    { id: generateId(), name: 'Broiler Chicks', quantity: 0, min: 10, inStock: false },
-    { id: generateId(), name: 'Snail Rearing (stock)', quantity: 0, min: 6, inStock: false }
-];
-
-function loadInventory() {
-    try {
-        const raw = localStorage.getItem(INVENTORY_KEY);
-        if (!raw) return defaultInventory.slice();
-        const parsed = JSON.parse(raw);
-        if (!Array.isArray(parsed)) return defaultInventory.slice();
-
-        // Migrate older items that may lack id/quantity fields
-        const migrated = parsed.map(item => {
-            const copy = Object.assign({}, item);
-            if (!copy.id) copy.id = generateId();
-            if (typeof copy.quantity !== 'number') copy.quantity = copy.inStock ? 1 : 0;
-            if (typeof copy.inStock !== 'boolean') copy.inStock = Boolean(copy.quantity && copy.quantity > 0);
-            if (typeof copy.min !== 'number') copy.min = 0;
-            return copy;
-        });
-        return migrated;
-    } catch (e) {
-        console.warn('Failed to load inventory, using defaults', e);
-        return defaultInventory.slice();
-    }
-}
-
-function saveInventory(items) {
-    try {
-        localStorage.setItem(INVENTORY_KEY, JSON.stringify(items));
-    } catch (e) {
-        console.warn('Failed to save inventory', e);
-    }
-}
-
-function findIndexById(items, id) {
-    return items.findIndex(i => i.id === id);
-}
-
-function renderInventory() {
-    const list = document.getElementById('stockList');
-    if (!list) return;
-    const allItems = loadInventory();
-
-    // Sort: in-stock first, then by name
-    allItems.sort((a, b) => {
-        if (a.inStock === b.inStock) return a.name.localeCompare(b.name);
-        return a.inStock ? -1 : 1;
-    });
-
-    list.innerHTML = '';
-    if (allItems.length === 0) {
-        const msg = document.createElement('li');
-        msg.className = 'stock-item';
-        msg.innerHTML = '<div class="meta"><h4>No inventory items</h4></div>';
-        list.appendChild(msg);
-        return;
-    }
-
-    allItems.forEach((it) => {
-        const li = document.createElement('li');
-        li.className = 'stock-item';
-
-        const meta = document.createElement('div');
-        meta.className = 'meta';
-        const h = document.createElement('h4');
-        h.textContent = it.name;
-        meta.appendChild(h);
-
-        // quantity display
-        const qty = document.createElement('div');
-        qty.className = 'muted';
-        qty.textContent = `Qty: ${it.quantity}`;
-        meta.appendChild(qty);
-
-        const badge = document.createElement('span');
-        badge.className = `badge ${it.inStock ? 'in' : 'out'}`;
-        badge.textContent = it.inStock ? 'In Stock' : 'Out';
-        meta.appendChild(badge);
-
-        const controls = document.createElement('div');
-        controls.className = 'controls';
-
-        // toggle in/out
-        const toggle = document.createElement('button');
-        toggle.className = 'toggle-btn';
-        toggle.setAttribute('aria-pressed', it.inStock ? 'true' : 'false');
-        toggle.textContent = it.inStock ? 'Mark Out' : 'Mark In';
-        toggle.addEventListener('click', () => {
-            const itemsNow = loadInventory();
-            const idx = findIndexById(itemsNow, it.id);
-            if (idx === -1) return;
-            itemsNow[idx].inStock = !itemsNow[idx].inStock;
-            // Ensure quantity matches inStock state
-            if (!itemsNow[idx].inStock) itemsNow[idx].quantity = 0;
-            else if (itemsNow[idx].quantity <= 0) itemsNow[idx].quantity = 1;
-            saveInventory(itemsNow);
-            renderInventory();
-        });
-        toggle.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle.click(); } });
-
-        // quantity controls
-        const dec = document.createElement('button');
-        dec.className = 'toggle-btn';
-        dec.setAttribute('aria-label', `Decrease ${it.name} quantity`);
-        dec.textContent = '-';
-        dec.addEventListener('click', () => {
-            const itemsNow = loadInventory();
-            const idx = findIndexById(itemsNow, it.id);
-            if (idx === -1) return;
-            itemsNow[idx].quantity = Math.max(0, (itemsNow[idx].quantity || 0) - 1);
-            if (itemsNow[idx].quantity === 0) itemsNow[idx].inStock = false;
-            saveInventory(itemsNow);
-            renderInventory();
-        });
-
-        const inc = document.createElement('button');
-        inc.className = 'toggle-btn';
-        inc.setAttribute('aria-label', `Increase ${it.name} quantity`);
-        inc.textContent = '+';
-        inc.addEventListener('click', () => {
-            const itemsNow = loadInventory();
-            const idx = findIndexById(itemsNow, it.id);
-            if (idx === -1) return;
-            itemsNow[idx].quantity = (itemsNow[idx].quantity || 0) + 1;
-            if (itemsNow[idx].quantity > 0) itemsNow[idx].inStock = true;
-            saveInventory(itemsNow);
-            renderInventory();
-        });
-
-        controls.appendChild(dec);
-        controls.appendChild(toggle);
-        controls.appendChild(inc);
-
-        li.appendChild(meta);
-        li.appendChild(controls);
-        list.appendChild(li);
-    });
-}
-
-// Add item form handling (supports optional quantity field)
-const stockForm = document.getElementById('stockForm');
-if (stockForm) {
-    stockForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        const input = document.getElementById('stockName');
-        const qtyInput = document.getElementById('stockQty');
-        if (!input) return;
-        const name = input.value && input.value.trim();
-        if (!name) return;
-        const qty = qtyInput ? Math.max(0, parseInt(qtyInput.value || '0', 10)) : 0;
-        const items = loadInventory();
-        items.push({ id: generateId(), name, quantity: qty, min: 0, inStock: qty > 0 });
-        saveInventory(items);
-        if (input) input.value = '';
-        if (qtyInput) qtyInput.value = '';
-        renderInventory();
-        input.focus();
-    });
-}
+/* Inventory/stock features removed per user request */
 
 // Initialize inventory display on load
 document.addEventListener('DOMContentLoaded', () => {
-    renderInventory();
     // Apply gallery featured metadata when page loads
     applyGalleryMeta();
 
@@ -364,10 +192,7 @@ if (adminChannel) {
     adminChannel.addEventListener('message', (ev) => {
         try {
             const data = ev.data || {};
-            if (data.type === 'inventoryUpdate') {
-                // inventory changed in admin page — re-render from localStorage
-                renderInventory();
-            } else if (data.type === 'galleryUpdate') {
+            if (data.type === 'galleryUpdate') {
                 // gallery metadata changed
                 applyGalleryMeta();
             }
@@ -484,32 +309,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initCarousel();
 });
 
-/* Remote inventory polling (optional): fetch inventory.json from GitHub Pages and apply so everyone sees published changes.
-   This will try the provided GitHub Pages URL and, if successful, overwrite the local inventory used for display.
-*/
-const REMOTE_INVENTORY_URL = 'https://sam-fedel.github.io/Sam-Fedel-Farms-Agricultural-Services-/inventory.json';
-async function fetchAndApplyRemoteInventory() {
-    try {
-        const res = await fetch(REMOTE_INVENTORY_URL, { cache: 'no-store' });
-        if (!res.ok) return false;
-        const json = await res.json();
-        if (!Array.isArray(json)) return false;
-        // Save remote inventory locally and render
-        try { localStorage.setItem(INVENTORY_KEY, JSON.stringify(json)); } catch (e) { console.warn('failed to save remote inventory', e); }
-        renderInventory();
-        showToast('Inventory updated from remote');
-        return true;
-    } catch (err) {
-        // network failure, ignore
-        return false;
-    }
-}
-
-// Poll remote inventory on load and every 30s
-document.addEventListener('DOMContentLoaded', () => {
-    fetchAndApplyRemoteInventory();
-    setInterval(fetchAndApplyRemoteInventory, 30000);
-});
+/* Remote inventory polling removed (inventory features disabled) */
 
 // Small toast helper for notifications
 function showToast(msg, timeout = 3000) {

@@ -14,10 +14,7 @@
     h1 { margin-bottom: 8px; color: #bff1b0; }
     .tool-bar { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:12px; }
     .panel { background: rgba(0,0,0,0.35); padding:12px; border-radius:10px; margin-bottom:14px; }
-    .inv-list { list-style:none; padding:0; margin:0; display:grid; gap:8px; }
-    .inv-item { display:flex; gap:8px; align-items:center; justify-content:space-between; padding:10px; border-radius:8px; background: linear-gradient(180deg, rgba(0,40,0,0.08), rgba(0,40,0,0.02)); }
-    .inv-left { display:flex; gap:12px; align-items:center; }
-    .inv-actions { display:flex; gap:8px; }
+    /* inventory styles removed */
     .small { font-size:0.9rem; color:#dff6d8; }
     .muted { color:#99bfa1; }
     .file-input { display:none; }
@@ -28,40 +25,7 @@
   <div class="admin-wrap">
     <a class="back" href="index.html">← Back to site</a>
     <h1>Admin Panel — Sam Fedel Farms</h1>
-    <p class="small muted">This admin page runs in your browser and stores settings locally (no server required). Inventory is saved under <code>sf_inventory_v1</code> in localStorage.</p>
-
-    <div class="panel">
-      <h2>Inventory Management</h2>
-      <div class="tool-bar">
-        <input id="newItem" type="text" placeholder="New item name" style="padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:#071207;color:#fff; min-width:220px;">
-        <button id="addBtn" class="btn">Add</button>
-        <button id="exportBtn" class="btn">Export JSON</button>
-        <label class="btn" for="importFile" style="cursor:pointer">Import JSON</label>
-        <input id="importFile" type="file" accept="application/json" class="file-input">
-        <button id="clearBtn" class="btn">Reset Defaults</button>
-      </div>
-      <div style="margin-top:10px;" class="muted small">Publish inventory to GitHub (optional):</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
-        <input id="ghOwner" type="text" placeholder="owner (github)" value="sam-fedel" style="padding:8px;border-radius:8px;min-width:140px;">
-        <input id="ghRepo" type="text" placeholder="repo name" value="Sam-Fedel-Farms-Agricultural-Services-" style="padding:8px;border-radius:8px;min-width:260px;">
-        <input id="ghPath" type="text" placeholder="file path (inventory.json)" value="inventory.json" style="padding:8px;border-radius:8px;min-width:160px;">
-        <input id="ghToken" type="password" placeholder="GitHub token (kept local)" style="padding:8px;border-radius:8px;min-width:240px;">
-        <button id="publishBtn" class="btn">Publish to GitHub</button>
-      </div>
-      <div class="muted small" style="margin-top:6px;">Note: Publishing uses the GitHub API and requires a Personal Access Token with repo access. For security, do not store long-lived tokens in this page; revoke after use.</div>
-        <div style="margin-top:12px;" class="panel">
-          <h3>Safer publish (no token required)</h3>
-          <p class="small muted">If you prefer not to paste a Personal Access Token in the browser, you can publish by uploading a file named <code>inventory-source.json</code> to a branch called <code>inventory-updates</code> in this repository. A GitHub Actions workflow will automatically copy that file to <code>inventory.json</code> on the <code>main</code> branch and make it live on the site.</p>
-          <ol>
-            <li>Go to your repository on GitHub: <code>https://github.com/sam-fedel/Sam-Fedel-Farms-Agricultural-Services-</code></li>
-            <li>Click <strong>Add file → Upload files</strong>, choose your <code>inventory-source.json</code>, and set the branch to <code>inventory-updates</code> (create it if necessary).</li>
-            <li>Commit the file; the GitHub Actions workflow will run and update <code>inventory.json</code> on <code>main</code>.</li>
-            <li>Visitors will receive the published inventory automatically (the site polls every 30s).</li>
-          </ol>
-          <p class="small muted">This approach uses the repository's built-in GitHub Actions (the workflow is already added to this repo) and avoids sharing tokens in the browser.</p>
-        </div>
-      <ul id="invList" class="inv-list" aria-live="polite"></ul>
-    </div>
+    
 
     <div class="panel">
       <h2>Gallery — Featured Images</h2>
@@ -75,75 +39,11 @@
   </div>
 
 <script>
-// Admin scripts — inventory CRUD and gallery metadata
-const INVENTORY_KEY = 'sf_inventory_v1';
+// Admin inventory features removed per user request; gallery code follows
 const GALLERY_META_KEY = 'sf_gallery_meta';
-const defaultInventory = [
-  { name: 'Yams', inStock: true },
-  { name: 'Peppers', inStock: true },
-  { name: 'Fish Fingerlings', inStock: false },
-  { name: 'Broiler Chicks', inStock: false },
-  { name: 'Snail Rearing (stock)', inStock: false }
-];
   // Broadcast channel (notify open pages in same origin)
   const bc = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('sf_admin_channel') : null;
-
-  function broadcastInventory(items){
-    try{ if(bc) bc.postMessage({ type: 'inventoryUpdate', items }); }catch(e){console.warn('broadcast failed', e);} }
-
-  function broadcastGallery(meta){
-    try{ if(bc) bc.postMessage({ type: 'galleryUpdate', meta }); }catch(e){console.warn('broadcast failed', e);} }
-
-function loadInventory(){
-  try{ const raw = localStorage.getItem(INVENTORY_KEY); if(!raw) return defaultInventory.slice(); const p = JSON.parse(raw); return Array.isArray(p)?p:defaultInventory.slice(); }catch(e){console.warn(e); return defaultInventory.slice(); }
-}
-  function saveInventory(items){ try{ localStorage.setItem(INVENTORY_KEY, JSON.stringify(items)); broadcastInventory(items); }catch(e){ console.warn('save failed',e); } }
-
-function renderInventory(){
-  const list = document.getElementById('invList'); if(!list) return; list.innerHTML='';
-  const items = loadInventory();
-  items.forEach((it, idx)=>{
-    const li = document.createElement('li'); li.className='inv-item';
-    const left = document.createElement('div'); left.className='inv-left';
-    const title = document.createElement('div'); title.innerHTML = '<strong>'+escapeHtml(it.name)+'</strong><div class="muted">'+(it.inStock?'<span style="color:#9eff78">In Stock</span>':'<span style="color:#ddd">Out</span>')+'</div>';
-    left.appendChild(title);
-
-    const actions = document.createElement('div'); actions.className='inv-actions';
-    const toggle = document.createElement('button'); toggle.className='btn'; toggle.textContent = it.inStock? 'Mark Out':'Mark In';
-    toggle.addEventListener('click', ()=>{ const a = loadInventory(); a[idx].inStock = !a[idx].inStock; saveInventory(a); renderInventory(); });
-
-    const edit = document.createElement('button'); edit.className='btn'; edit.textContent='Edit'; edit.addEventListener('click', ()=>{ const newName = prompt('Edit item name', it.name); if(newName){ const a = loadInventory(); a[idx].name = newName.trim(); saveInventory(a); renderInventory(); }});
-
-    const del = document.createElement('button'); del.className='btn'; del.textContent='Delete'; del.addEventListener('click', ()=>{ if(!confirm('Delete this item?')) return; const a=loadInventory(); a.splice(idx,1); saveInventory(a); renderInventory(); });
-
-    actions.appendChild(toggle); actions.appendChild(edit); actions.appendChild(del);
-    li.appendChild(left); li.appendChild(actions);
-    list.appendChild(li);
-  });
-}
-
-// small helper
-function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-// Add item
-document.getElementById('addBtn').addEventListener('click', ()=>{
-  const input = document.getElementById('newItem'); const name = (input.value||'').trim(); if(!name) return input.focus(); const items = loadInventory(); items.push({ name, inStock:true }); saveInventory(items); input.value=''; renderInventory(); input.focus();
-});
-
-// Export
-document.getElementById('exportBtn').addEventListener('click', ()=>{
-  const items = loadInventory(); const blob = new Blob([JSON.stringify(items, null, 2)], {type:'application/json'}); const url = URL.createObjectURL(blob); const a = document.createElement('a'); a.href = url; a.download = 'sf_inventory_export.json'; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
-});
-
-// Import
-const importFile = document.getElementById('importFile'); importFile.addEventListener('change', (e)=>{
-  const f = e.target.files && e.target.files[0]; if(!f) return; const reader = new FileReader(); reader.onload = function(){ try{ const parsed = JSON.parse(reader.result); if(!Array.isArray(parsed)){ alert('Invalid format: expected an array of items'); return; } saveInventory(parsed); renderInventory(); alert('Import complete'); }catch(err){ alert('Failed to import: '+err.message); } }; reader.readAsText(f);
-});
-
-// Reset to defaults
-document.getElementById('clearBtn').addEventListener('click', ()=>{
-  if(!confirm('Reset inventory to defaults? This cannot be undone.')) return; saveInventory(defaultInventory.slice()); renderInventory(); alert('Reset to defaults');
-});
+  function broadcastGallery(meta){ try{ if(bc) bc.postMessage({ type: 'galleryUpdate', meta }); }catch(e){console.warn('broadcast failed', e);} }
 
 // --- Gallery metadata (featured) ---
 const galleryFiles = [
@@ -190,7 +90,6 @@ function renderGallery(){
 
 // Init
 document.addEventListener('DOMContentLoaded', ()=>{ 
-  renderInventory(); 
   renderGallery();
   // init lozad for admin thumbnails
   if (typeof lozad !== 'undefined') {
@@ -206,57 +105,7 @@ document.addEventListener('DOMContentLoaded', ()=>{
   }
 });
 
-// --- GitHub publish helpers ---
-async function publishInventoryToGitHub(token, owner, repo, path) {
-  if (!token) throw new Error('Missing token');
-  const url = `https://api.github.com/repos/${owner}/${repo}/contents/${encodeURIComponent(path)}`;
-  const items = loadInventory();
-  const contentStr = JSON.stringify(items, null, 2);
-  // encode to base64
-  const contentB64 = btoa(unescape(encodeURIComponent(contentStr)));
-  const headers = { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' };
-
-  // attempt to get existing file to retrieve sha
-  let sha = null;
-  try {
-    const getRes = await fetch(url, { headers });
-    if (getRes.ok) {
-      const j = await getRes.json();
-      sha = j.sha;
-    }
-  } catch (e) {
-    // ignore - file might not exist
-  }
-
-  const body = { message: 'Update inventory.json via admin', content: contentB64, committer: { name: 'Site Admin', email: 'noreply@samfedel.local' } };
-  if (sha) body.sha = sha;
-
-  const putRes = await fetch(url, { method: 'PUT', headers: { ...headers, 'Content-Type': 'application/json' }, body: JSON.stringify(body) });
-  if (!putRes.ok) {
-    const txt = await putRes.text();
-    throw new Error('GitHub API error: ' + txt);
-  }
-  return await putRes.json();
-}
-
-document.getElementById('publishBtn').addEventListener('click', async () => {
-  const token = document.getElementById('ghToken').value.trim();
-  const owner = document.getElementById('ghOwner').value.trim();
-  const repo = document.getElementById('ghRepo').value.trim();
-  const path = document.getElementById('ghPath').value.trim() || 'inventory.json';
-  if (!token || !owner || !repo) { alert('Please provide owner, repo and token to publish.'); return; }
-  try {
-    document.getElementById('publishBtn').textContent = 'Publishing...';
-    const res = await publishInventoryToGitHub(token, owner, repo, path);
-    alert('Published to GitHub: ' + (res.content && res.content.path));
-    // clear token field after use
-    document.getElementById('ghToken').value = '';
-  } catch (err) {
-    alert('Publish failed: ' + err.message);
-  } finally {
-    document.getElementById('publishBtn').textContent = 'Publish to GitHub';
-  }
-});
+// GitHub publish helpers removed (inventory features disabled)
 
 </script>
 </body>

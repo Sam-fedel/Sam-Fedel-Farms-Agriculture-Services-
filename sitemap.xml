@@ -77,10 +77,6 @@
     <priority>0.7</priority>
   </url>
   <url>
-    <loc>https://sam-fedel.github.io/Sam-Fedel-Farms-Agricultural-Services-/#inventory</loc>
-    <priority>0.5</priority>
-  </url>
-  <url>
     <loc>https://sam-fedel.github.io/Sam-Fedel-Farms-Agricultural-Services-/#contact</loc>
     <priority>0.4</priority>
   </url>
