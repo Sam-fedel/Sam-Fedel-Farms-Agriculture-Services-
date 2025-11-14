@@ -570,7 +570,7 @@ footer strong {
     .bouncing-balls .ball:nth-child(1) { left: 4%; --ball-size: 40px; }
     .bouncing-balls .ball:nth-child(2) { left: 16%; --ball-size: 56px; }
     .bouncing-balls .ball:nth-child(3) { left: 30%; --ball-size: 46px; }
-    .bouncing-balls .ball:nth-child(4) { left: 50%; --ball-size: 66px; }
+    .bouncing-balls .ball:nth-child(4) { left: 9ch; --ball-size: 66px; }
     .bouncing-balls .ball:nth-child(5) { left: 68%; --ball-size: 44px; }
     .bouncing-balls .ball:nth-child(6) { left: 82%; --ball-size: 56px; }
     .bouncing-balls .ball:nth-child(7) { left: 92%; --ball-size: 36px; }
