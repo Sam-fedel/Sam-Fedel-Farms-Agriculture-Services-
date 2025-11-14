@@ -1,4 +1,4 @@
-/* General Styles */
+/* Chisom Life Eke — General Styles */
 * {
     margin: 0;
     padding: 0;
@@ -7,12 +7,72 @@
 }
 
 body {
-    background-color: #000;
-    color: #fff;
+    background-color: var(--bg);
+    color: var(--text);
     scroll-behavior: smooth;
 }
 
-/* Animated background gradient */
+/* Theme tokens (light & dark) */
+:root {
+    /* Default (dark) colors */
+    --bg: #000000;
+    --surface: #0f1110;
+    --muted-surface: #111111;
+    --text: #ffffff;
+    --muted: #f0f0d0;
+    --brand: #00ff66; /* greens for highlights */
+    --accent: #ffd700; /* yellow accent */
+    --btn-bg: linear-gradient(45deg, #00cc44, #ffdd55);
+    --btn-text: #000000;
+    --nav-bg: linear-gradient(180deg, rgba(0,0,0,0.55), rgba(0,0,0,0.35));
+    --welcome-bg: linear-gradient(90deg, #0f8f2f, #00c853);
+    --bg-gradient: linear-gradient(120deg, #001100 0%, #000022 35%, #220011 70%, #001133 100%);
+}
+
+/* Light theme overrides applied when html[data-theme="light"] */
+html[data-theme="light"] {
+    --bg: #f7f7f8;
+    --surface: #ffffff;
+    --muted-surface: #f1f3f4;
+    --text: #0b0b0b;
+    --muted: #444444;
+    --brand: #0b7a3b;
+    --accent: #b88600;
+    --btn-bg: linear-gradient(45deg, #0b8f3b, #ffd27a);
+    --btn-text: #07110a;
+    --nav-bg: linear-gradient(180deg, rgba(255,255,255,0.95), rgba(255,255,255,0.9));
+    --welcome-bg: linear-gradient(90deg, #4caf50, #66bb6a);
+    --bg-gradient: linear-gradient(120deg, #e8f5e9 0%, #fff8e1 35%, #fff3e0 70%, #e8f5f9 100%);
+}
+
+/* Welcome banner */
+.welcome-banner {
+    position: fixed;
+    top: 64px;
+    left: 12px;
+    right: 12px;
+    max-width: 1100px;
+    margin: 0 auto;
+    z-index: 1100;
+    background: linear-gradient(90deg, #0f8f2f, #00c853);
+    color: #fff;
+    padding: 12px 16px;
+    border-radius: 10px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.45);
+    display: none;
+    align-items: center;
+    justify-content: space-between;
+}
+.welcome-banner .welcome-inner { display:flex; align-items:center; gap:12px; width:100%; }
+.welcome-banner .welcome-text { font-weight:700; font-size:1rem; }
+.welcome-banner .welcome-dismiss { background: transparent; border: none; color: rgba(255,255,255,0.95); font-size:1.2rem; cursor:pointer; padding:6px 8px; border-radius:6px; }
+.welcome-banner.show { display:flex; animation: slideDown 420ms cubic-bezier(.2,.9,.2,1); }
+@keyframes slideDown { from { transform: translateY(-6px); opacity:0; } to { transform: translateY(0); opacity:1; } }
+@media (prefers-reduced-motion: reduce) { .welcome-banner.show { animation: none; } }
+
+@media (max-width: 720px) { .welcome-banner { top: 56px; left: 8px; right: 8px; padding: 10px 12px; } }
+
+/* Chisom Life Eke — Animated background gradient */
 html, body {
     height: 100%;
 }
@@ -22,7 +82,7 @@ body::before {
     position: fixed;
     inset: 0;
     z-index: -3;
-    background: linear-gradient(120deg, #001100 0%, #000022 35%, #220011 70%, #001133 100%);
+    background: var(--bg-gradient);
     background-size: 300% 300%;
     animation: backgroundShift 20s linear infinite;
     opacity: 0.6;
@@ -34,30 +94,32 @@ body::before {
     100% { background-position: 0% 50%; }
 }
 
-/* Buttons */
+/* Chisom Life Eke — Buttons */
 .btn {
     display: inline-block;
-    background: linear-gradient(45deg, #00ff00, #ffff00);
-    color: #000;
-    padding: 10px 25px;
-    border-radius: 30px;
+    background: var(--btn-bg);
+    color: var(--btn-text);
+    padding: 10px 22px;
+    border-radius: 28px;
     text-decoration: none;
     font-weight: 700;
-    transition: 0.3s;
+    transition: transform 220ms ease, box-shadow 220ms ease;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.25);
 }
 
 .btn:hover {
-    transform: scale(1.1);
+    transform: translateY(-3px) scale(1.02);
+    box-shadow: 0 14px 40px rgba(0,0,0,0.28);
 }
 
-/* Accessible focus and micro-interaction for buttons */
+/* Chisom Life Eke — Accessible focus and micro-interaction for buttons */
 .btn:focus {
     outline: 3px solid rgba(255,255,0,0.25);
     outline-offset: 4px;
     transform: scale(1.05);
 }
 
-/* Ripple effect container */
+/* Chisom Life Eke — Ripple effect container */
 .btn {
     position: relative;
     overflow: hidden;
@@ -76,7 +138,7 @@ body::before {
     to { transform: scale(20); opacity: 0; }
 }
 
-/* Hero Section */
+/* Chisom Life Eke — Hero Section */
 .hero {
     display: flex;
     justify-content: center;
@@ -91,16 +153,16 @@ body::before {
 .hero-content h1 {
     font-size: 3em;
     margin-bottom: 20px;
-    color: #00ff00;
+    color: var(--brand);
 }
 
 .hero-content p {
     font-size: 1.2em;
-    color: #ffff00;
+    color: var(--accent);
     margin-bottom: 30px;
 }
 
-/* Hero Animation */
+/* Chisom Life Eke — Hero Animation */
 .hero-animation {
     position: absolute;
     width: 100%;
@@ -111,7 +173,7 @@ body::before {
     animation: pulse 4s infinite;
 }
 
-/* Floating orbs inside hero-animation (created by JS) */
+/* Chisom Life Eke — Floating orbs inside hero-animation (created by JS) */
 .hero-animation .orb {
     position: absolute;
     border-radius: 50%;
@@ -131,16 +193,16 @@ body::before {
     50% { transform: scale(1.2); opacity: 0.3; }
 }
 
-/* Sections */
+/* Chisom Life Eke — Sections */
 section {
     padding: 80px 20px;
     text-align: center;
 }
 
 .about {
-    background-color: #111;
-    border-left: 5px solid #00ff00;
-    border-right: 5px solid #ffff00;
+    background-color: var(--muted-surface);
+    border-left: 5px solid var(--brand);
+    border-right: 5px solid var(--accent);
 }
 
 .services {
@@ -156,19 +218,19 @@ section {
 }
 
 .card {
-    background-color: #111;
-    padding: 25px;
-    border-radius: 15px;
+    background-color: var(--surface);
+    padding: 22px;
+    border-radius: 14px;
     width: 250px;
-    transition: 0.3s;
+    transition: transform 260ms cubic-bezier(.2,.9,.2,1), box-shadow 260ms ease;
 }
 
 .card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 0 20px #00ff00, 0 0 30px #ffff00;
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.35), 0 0 18px rgba(0,0,0,0.18);
 }
 
-/* Card entrance subtle animation */
+/* Chisom Life Eke — Card entrance subtle animation */
 .card {
     opacity: 0;
     transform: translateY(20px) scale(0.99);
@@ -180,7 +242,7 @@ section {
 }
 
 .gallery {
-    background-color: #111;
+    background-color: var(--muted-surface);
 }
 
 .gallery-grid {
@@ -201,28 +263,28 @@ section {
     box-shadow: 0 0 15px #00ff00, 0 0 20px #ffff00;
 }
 
-/* Featured gallery image highlight */
+/* Chisom Life Eke — Featured gallery image highlight */
 .gallery-grid img.featured {
     transform: scale(1.03);
     box-shadow: 0 8px 30px rgba(255,215,0,0.25), 0 0 12px rgba(255,200,0,0.08);
     border: 3px solid #ffd700;
 }
 
-/* Carousel styles */
+/* Chisom Life Eke — Carousel styles */
 .carousel { position: relative; max-width: 1100px; margin: 20px auto; overflow: visible; }
 .carousel-track-container { overflow: hidden; position: relative; }
 .carousel-track { display: flex; transition: transform 520ms cubic-bezier(.2,.9,.2,1); list-style: none; margin: 0; padding: 0; }
 .carousel-slide { min-width: 100%; box-sizing: border-box; padding: 12px; display: flex; justify-content:center; }
 .carousel-slide img { width: 100%; max-height: 520px; object-fit: cover; border-radius: 12px; display:block; }
 
-.carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); z-index: 6; background: rgba(0,0,0,0.45); color: #fff; border: none; padding: 12px 14px; font-size: 28px; border-radius: 8px; cursor: pointer; }
+.carousel-btn { position: absolute; top: 50%; transform: translateY(-50%); z-index: 6; background: rgba(0,0,0,0.35); color: var(--text); border: none; padding: 12px 14px; font-size: 28px; border-radius: 8px; cursor: pointer; }
 .carousel-btn.prev { left: 12px; }
 .carousel-btn.next { right: 12px; }
 .carousel-btn:focus { outline: 3px solid rgba(255,255,255,0.12); }
 
 .carousel-dots { display:flex; gap:8px; justify-content:center; margin-top:12px; }
 .carousel-dots button { width:10px; height:10px; border-radius:50%; border:none; background: rgba(255,255,255,0.25); cursor:pointer; }
-.carousel-dots button.active { background: #ffd700; box-shadow: 0 0 8px rgba(255,215,0,0.15); }
+.carousel-dots button.active { background: var(--accent); box-shadow: 0 0 8px rgba(0,0,0,0.12); }
 
 @media (max-width: 720px) {
     .carousel-slide img { max-height: 320px; }
@@ -233,11 +295,11 @@ section {
     .carousel-track { transition: none !important; }
 }
 
-/* lozad placeholder styling and blur-up effect */
+/* Chisom Life Eke — Lozad placeholder styling and blur-up effect */
 .lozad { display:block; width:100%; opacity:0.92; filter: blur(12px); transition: filter 600ms ease, opacity 400ms ease; }
 .lozad.loaded { filter: blur(0); opacity:1; }
 
-/* Fade-in sections (observer toggles 'fade-in') */
+/* Chisom Life Eke — Fade-in sections (observer toggles 'fade-in') */
 .fade-section {
     opacity: 0;
     transform: translateY(20px);
@@ -248,7 +310,7 @@ section {
     transform: translateY(0);
 }
 
-/* Small utility for staggered children */
+/* Chisom Life Eke — Small utility for staggered children */
 .stagger > * {
     opacity: 0;
     transform: translateY(12px);
@@ -259,7 +321,7 @@ section {
     transition: transform 500ms cubic-bezier(.2,.9,.2,1), opacity 500ms ease;
 }
 
-/* Footer subtle animation */
+/* Chisom Life Eke — Footer subtle animation */
 footer {
     opacity: 0.95;
 }
@@ -298,10 +360,10 @@ footer {
 }
 
 footer strong {
-    color: #ffff00; /* Highlights the names */
+    color: var(--accent); /* Highlights the names */
 }
 
-/* Respect user preference for reduced motion */
+/* Chisom Life Eke — Respect user preference for reduced motion */
 @media (prefers-reduced-motion: reduce) {
     * {
         animation-duration: 0.001ms !important;
@@ -312,7 +374,7 @@ footer strong {
     .hero-animation { opacity: 0.001 !important; }
 }
 
-/* Responsive mobile adjustments */
+/* Chisom Life Eke — Responsive mobile adjustments */
 @media (max-width: 720px) {
     .hero {
         height: 70vh;
@@ -373,7 +435,7 @@ footer strong {
     section { padding: 48px 12px; }
 }
 
-/* Multi-layer animated grass background (farm vibe) */
+/* Chisom Life Eke — Multi-layer animated grass background (farm vibe) */
 .grass-wrap {
     position: fixed;
     left: 0;
@@ -433,7 +495,7 @@ footer strong {
     100% { transform: translateX(0); }
 }
 
-/* Reduced intensity for small screens */
+/* Chisom Life Eke — Reduced intensity for small screens */
 @media (max-width: 720px) {
     .grass-wrap { height: 120px; }
     .grass-layer.layer1 { display: none; }
@@ -445,9 +507,9 @@ footer strong {
     .grass-wrap { display: none; }
 }
 
-/* Inventory/Stock styles removed per user request */
+/* Chisom Life Eke — Inventory/Stock styles removed per user request */
 
-/* Bouncing balls in hero background */
+/* Chisom Life Eke — Bouncing balls in hero background */
 .hero-content { position: relative; z-index: 2; }
 .hero-animation { z-index: 1; pointer-events: none; }
 
@@ -502,7 +564,7 @@ footer strong {
     }
 }
 
-/* Lessen motion and size on smaller screens */
+/* Chisom Life Eke — Lessen motion and size on smaller screens */
 @media (max-width: 720px) {
     .bouncing-balls .ball { bottom: 6%; filter: blur(8px); }
     .bouncing-balls .ball:nth-child(1) { left: 4%; --ball-size: 40px; }
@@ -515,12 +577,12 @@ footer strong {
     @keyframes bounce { 28% { transform: translateY(-18vh) scale(1.04); } }
 }
 
-/* Respect prefers-reduced-motion */
+/* Chisom Life Eke — Respect prefers-reduced-motion */
 @media (prefers-reduced-motion: reduce) {
     .bouncing-balls .ball { animation: none !important; opacity: 0.7; transform: translateY(0) scale(1); }
 }
 
-/* Navigation bar and typewriter styles */
+/* Chisom Life Eke — Navigation bar and typewriter styles */
 .site-header {
     position: fixed;
     left: 0;
@@ -541,11 +603,11 @@ footer strong {
 }
 .brand { color: #fff; text-decoration: none; font-weight: 800; letter-spacing: 0.4px; }
 .nav-links { list-style: none; display: flex; gap: 12px; align-items: center; margin: 0; padding: 0; }
-.nav-links a { color: #fff; text-decoration: none; padding: 8px 10px; border-radius: 8px; font-weight: 600; }
+.nav-links a { color: var(--text); text-decoration: none; padding: 8px 10px; border-radius: 8px; font-weight: 600; }
 .nav-links a:hover, .nav-links a:focus { background: rgba(255,255,255,0.04); outline: none; }
-.nav-toggle { display: none; background: transparent; border: 1px solid rgba(255,255,255,0.06); color: #fff; padding: 6px 10px; border-radius: 8px; cursor: pointer; }
+.nav-toggle { display: none; background: transparent; border: 1px solid rgba(0,0,0,0.14); color: var(--text); padding: 6px 10px; border-radius: 8px; cursor: pointer; }
 
-/* make room for the fixed header so hero content doesn't sit under it */
+/* Chisom Life Eke — Make room for the fixed header so hero content doesn't sit under it */
 .hero { min-height: calc(100vh - 64px); padding-top: 40px; }
 
 @media (max-width: 720px) {
@@ -555,12 +617,60 @@ footer strong {
     .nav-links a { padding: 10px 12px; }
 }
 
-/* Typewriter look */
-.typewriter { display: inline-block; white-space: nowrap; overflow: hidden; vertical-align: middle; color: #ffffcc; font-weight: 600; }
+/* Chisom Life Eke — Typewriter look */
+.typewriter { display: inline-block; white-space: nowrap; overflow: hidden; vertical-align: middle; color: var(--muted); font-weight: 600; }
 .typewriter::after { content: ''; display: inline-block; width: 2px; height: 1.05em; background: #fff; margin-left: 6px; vertical-align: middle; animation: twink 1s steps(2,end) infinite; }
 @keyframes twink { 0% { opacity: 1; } 50% { opacity: 0; } 100% { opacity: 1; } }
 
 @media (prefers-reduced-motion: reduce) {
     .typewriter::after { display: none; }
+}
+
+/* Chisom Life Eke — Responsive improvements for typewriter on mobile */
+.typewriter {
+    max-width: 100%;
+    display: inline-block;
+    white-space: normal; /* allow wrapping for narrow screens */
+}
+.typewriter.small { font-size: 1rem; }
+.typewriter .tw-caret { display: inline-block; width: 2px; height: 1.05em; background: #fff; margin-left: 6px; vertical-align: middle; animation: twink 1s steps(2,end) infinite; }
+
+/* Chisom Life Eke — Ambient particles background container */
+.ambient-particles { position: absolute; inset: 0; pointer-events: none; z-index: 0; overflow: hidden; }
+.ambient-particles .particle {
+    position: absolute;
+    background: radial-gradient(circle, rgba(255,255,255,0.85), rgba(255,255,255,0.2));
+    opacity: 0.06;
+    border-radius: 50%;
+    will-change: transform, opacity;
+    filter: blur(4px);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 18px;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+.theme-toggle:focus { outline: 3px solid rgba(255,255,255,0.08); }
+
+/* Chisom Life Eke — Particle subtle float animation (direction varies with CSS var) */
+@keyframes particleFloat {
+    0% { transform: translateY(0) translateX(0) scale(1); opacity: 0.06; }
+    50% { transform: translateY(-18vh) translateX(var(--dx, 0px)) scale(1.08); opacity: 0.12; }
+    100% { transform: translateY(0) translateX(calc(var(--dx, 0px) * -1)) scale(1); opacity: 0.06; }
+}
+
+/* Chisom Life Eke — Limit particle rendering intensity on small screens */
+@media (max-width: 720px) {
+    .ambient-particles .particle { filter: blur(6px); opacity: 0.08; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ambient-particles { display: none !important; }
 }
 

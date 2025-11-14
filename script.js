@@ -1,4 +1,4 @@
-// Smooth fade-in animation for sections + staggered children
+// Chisom Life Eke — Smooth fade-in for sections with a gentle staggered reveal of children
 const sections = document.querySelectorAll('section');
 
 const observer = new IntersectionObserver((entries) => {
@@ -25,12 +25,12 @@ sections.forEach(section => {
     observer.observe(section);
 });
 
-// Create floating orbs in hero animation to enliven the hero section
+// Chisom Life Eke — Create floating orbs in the hero area to add soft motion and warmth
 function createHeroOrbs(requestedCount) {
     const container = document.querySelector('.hero-animation');
     if (!container) return;
 
-    // Respect user's reduced-motion preference
+    // Respect user's reduced-motion preference — accessibility first (Chisom)
     const prefersReduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     if (prefersReduce) {
         container.innerHTML = '';
@@ -38,7 +38,7 @@ function createHeroOrbs(requestedCount) {
         return;
     }
 
-    // Clear existing orbs
+    // Clear any existing orbs before drawing new ones
     container.innerHTML = '';
     const colors = ['rgba(0,255,0,0.18)', 'rgba(255,255,0,0.12)', 'rgba(0,200,120,0.12)'];
 
@@ -67,8 +67,9 @@ function createHeroOrbs(requestedCount) {
 }
 
 createHeroOrbs();
+createAmbientParticles();
 
-// Button ripple effect and keyboard activation
+// Chisom Life Eke — Button ripple micro-interaction and keyboard activation support
 function addButtonRipples() {
     document.addEventListener('pointerdown', e => {
         const btn = e.target.closest('.btn');
@@ -113,17 +114,18 @@ function addButtonRipples() {
 
 addButtonRipples();
 
-// Re-create orbs on resize for better placement
+// Chisom Life Eke — Recreate orbs and ambient items on resize to keep layout balanced
 let resizeTimeout;
 window.addEventListener('resize', () => {
     clearTimeout(resizeTimeout);
     resizeTimeout = setTimeout(() => {
         createHeroOrbs();
         updateGrass();
+        createAmbientParticles();
     }, 350);
 });
 
-// Adjust grass intensity & visibility based on viewport and reduced-motion preference
+// Chisom Life Eke — Adjust grass background intensity for performance and user preference
 function updateGrass() {
     const wrap = document.querySelector('.grass-wrap');
     if (!wrap) return;
@@ -147,7 +149,7 @@ function updateGrass() {
     }
 }
 
-// kick things off
+// Kick things off: initialize grass and visual helpers
 updateGrass();
 // listen for reduced-motion changes (some browsers support addEventListener on MediaQueryList)
 if (window.matchMedia) {
@@ -156,9 +158,9 @@ if (window.matchMedia) {
     else if (mq.addListener) mq.addListener(updateGrass);
 }
 
-/* Inventory/stock features removed per user request */
+/* Chisom Life Eke — Inventory/stock features removed as requested */
 
-// Initialize inventory display on load
+// Initialize page behaviors on load (gallery meta, lazy-loading, small inits)
 document.addEventListener('DOMContentLoaded', () => {
     // Apply gallery featured metadata when page loads
     applyGalleryMeta();
@@ -186,7 +188,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
-// BroadcastChannel listener for admin updates (real-time sync)
+// Chisom Life Eke — BroadcastChannel for admin updates (keeps gallery metadata live)
 const adminChannel = (typeof BroadcastChannel !== 'undefined') ? new BroadcastChannel('sf_admin_channel') : null;
 if (adminChannel) {
     adminChannel.addEventListener('message', (ev) => {
@@ -202,7 +204,7 @@ if (adminChannel) {
     });
 }
 
-// Gallery metadata helpers (mirror of admin)
+// Chisom Life Eke — Gallery metadata helpers (mirrors admin state for featured images)
 const GALLERY_META_KEY = 'sf_gallery_meta';
 function loadGalleryMeta(){ try { const raw = localStorage.getItem(GALLERY_META_KEY); return raw?JSON.parse(raw):{}; } catch(e) { return {}; } }
 function applyGalleryMeta(){
@@ -217,7 +219,7 @@ function applyGalleryMeta(){
     });
 }
 
-/* Carousel implementation */
+/* Chisom Life Eke — Carousel implementation: accessible, touch-friendly gallery */
 function initCarousel() {
     const carousel = document.getElementById('carousel');
     if (!carousel) return;
@@ -304,14 +306,14 @@ function initCarousel() {
     startAuto();
 }
 
-// initialize carousel on DOM ready
+// Initialize carousel when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     initCarousel();
 });
 
-/* Remote inventory polling removed (inventory features disabled) */
+/* Chisom Life Eke — Remote inventory polling removed (disabled) */
 
-// Small toast helper for notifications
+// Chisom Life Eke — Small toast helper for unobtrusive notifications
 function showToast(msg, timeout = 3000) {
     try {
         let t = document.getElementById('sf-toast');
@@ -335,7 +337,42 @@ function showToast(msg, timeout = 3000) {
     } catch (e) { /* ignore */ }
 }
 
-/* Typewriter animation for hero paragraph */
+/* Chisom Life Eke — Welcome banner: time-of-day greeting and dismiss behavior */
+function getTimeOfDayGreeting() {
+    const h = new Date().getHours();
+    if (h >= 5 && h < 12) return 'Good morning — welcome to Sam Fedel Farms ask we have it !';
+    if (h >= 12 && h < 17) return 'Good afternoon — welcome to Sam Fedel Farms we know what ur looking for just contact us!';
+    if (h >= 17 && h < 22) return 'Good evening — welcome to Sam Fedel Farms we know you want to make an order !';
+    return 'Welcome to Sam Fedel Farms!';
+}
+
+function showWelcomeBanner() {
+    const banner = document.getElementById('welcome-banner');
+    if (!banner) return;
+    const textEl = banner.querySelector('.welcome-text');
+    const dismissBtn = banner.querySelector('.welcome-dismiss');
+    if (!textEl || !dismissBtn) return;
+
+    textEl.textContent = getTimeOfDayGreeting();
+    banner.hidden = false;
+    // slight delay so CSS transition can run
+    setTimeout(() => banner.classList.add('show'), 20);
+
+    const dismiss = () => {
+        banner.classList.remove('show');
+        setTimeout(() => { banner.hidden = true; }, 240);
+    };
+
+    dismissBtn.addEventListener('click', dismiss);
+    banner.addEventListener('keydown', (e) => { if (e.key === 'Escape') dismiss(); });
+
+    // auto-hide after a short time if user doesn't interact
+    let autoHide = setTimeout(dismiss, 7000);
+    banner.addEventListener('mouseenter', () => clearTimeout(autoHide));
+    banner.addEventListener('mouseleave', () => { autoHide = setTimeout(dismiss, 4000); });
+}
+
+/* Chisom Life Eke — Typewriter animation for the hero paragraph (adaptive speed) */
 function runHeroTypewriter() {
     const el = document.getElementById('hero-type');
     if (!el) return;
@@ -345,19 +382,60 @@ function runHeroTypewriter() {
         el.textContent = text;
         return;
     }
+    // Adaptive speed: faster on small screens so users don't wait too long
+    const vw = window.innerWidth || document.documentElement.clientWidth;
+    const baseSpeed = (vw <= 720) ? 28 : 45; // ms per char
+
     el.textContent = '';
+    el.classList.toggle('small', vw <= 420);
+
     let i = 0;
-    const speed = 45; // ms per char
-    const timer = setInterval(() => {
+    function typeNext() {
+        if (i >= text.length) return;
         el.textContent += text.charAt(i);
         i++;
-        if (i >= text.length) {
-            clearInterval(timer);
-        }
-    }, speed);
+        // small human-like variance
+        const variance = Math.random() * (baseSpeed * 0.25);
+        setTimeout(typeNext, Math.max(8, baseSpeed - variance));
+    }
+    typeNext();
 }
 
-/* Mobile nav toggle */
+/* Chisom Life Eke — Ambient particles generator: subtle, low-cost background specks */
+function createAmbientParticles(maxCount) {
+    const container = document.querySelector('.ambient-particles');
+    if (!container) return;
+    const prefersReduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (prefersReduce) {
+        container.innerHTML = '';
+        container.style.opacity = '0';
+        return;
+    }
+
+    const vw = window.innerWidth || document.documentElement.clientWidth;
+    const base = (vw < 480) ? 6 : (vw < 900 ? 10 : 16);
+    const count = Math.min(maxCount || base, 24);
+    container.innerHTML = '';
+
+    for (let i = 0; i < count; i++) {
+        const p = document.createElement('span');
+        p.className = 'particle';
+        const size = Math.round((Math.random() * 18) + (vw < 480 ? 6 : 8));
+        p.style.width = `${size}px`;
+        p.style.height = `${size}px`;
+        p.style.left = `${Math.random() * 100}%`;
+        p.style.top = `${30 + Math.random() * 60}%`;
+        p.style.opacity = (0.03 + Math.random() * 0.08).toString();
+        const dur = 18 + Math.random() * 26;
+        const delay = Math.random() * 6;
+        const dx = `${Math.round((Math.random() - 0.5) * 120)}px`;
+        p.style.setProperty('--dx', dx);
+        p.style.animation = `particleFloat ${dur}s ease-in-out ${delay}s infinite`;
+        container.appendChild(p);
+    }
+}
+
+/* Chisom Life Eke — Mobile nav toggle: accessible toggle and auto-close on link click */
 function initMobileNav() {
     const toggle = document.querySelector('.nav-toggle');
     const links = document.querySelector('.nav-links');
@@ -378,4 +456,58 @@ function initMobileNav() {
 document.addEventListener('DOMContentLoaded', () => {
     runHeroTypewriter();
     initMobileNav();
+    showWelcomeBanner();
+    initThemeToggle();
 });
+
+/* Theme toggle: apply saved preference or system preference, allow toggling and persist in localStorage */
+function applyTheme(theme) {
+    try {
+        if (theme === 'light') document.documentElement.setAttribute('data-theme', 'light');
+        else document.documentElement.removeAttribute('data-theme');
+    } catch (e) { /* ignore */ }
+    const btn = document.getElementById('theme-toggle');
+    if (btn) {
+        const pressed = theme === 'light' ? 'true' : 'false';
+        btn.setAttribute('aria-pressed', pressed);
+        btn.textContent = theme === 'light' ? '☀️' : '🌙';
+    }
+}
+
+function initThemeToggle() {
+    const btn = document.getElementById('theme-toggle');
+    if (!btn) return;
+
+    const STORAGE_KEY = 'sf_theme_pref';
+    // Determine initial theme: saved preference -> system preference -> default dark
+    let saved = null;
+    try { saved = localStorage.getItem(STORAGE_KEY); } catch (e) { saved = null; }
+
+    if (saved === 'light' || saved === 'dark') applyTheme(saved === 'light' ? 'light' : 'dark');
+    else {
+        const mq = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)');
+        applyTheme(mq && mq.matches ? 'light' : 'dark');
+    }
+
+    btn.addEventListener('click', () => {
+        // Toggle between light and dark
+        const current = document.documentElement.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+        const next = current === 'light' ? 'dark' : 'light';
+        applyTheme(next === 'light' ? 'light' : 'dark');
+        try { localStorage.setItem(STORAGE_KEY, next); } catch (e) {}
+    });
+
+    // Keep button keyboard-accessible
+    btn.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); btn.click(); } });
+
+    // Respect system changes if no saved preference
+    try {
+        const mqLight = window.matchMedia('(prefers-color-scheme: light)');
+        mqLight.addEventListener && mqLight.addEventListener('change', (ev) => {
+            try {
+                const savedNow = localStorage.getItem(STORAGE_KEY);
+                if (!savedNow) applyTheme(ev.matches ? 'light' : 'dark');
+            } catch (e) { /* ignore */ }
+        });
+    } catch (e) { /* ignore */ }
+}
