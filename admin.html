@@ -7,6 +7,7 @@
   <link rel="stylesheet" href="style.css">
   <link rel="canonical" href="https://sam-fedel.github.io/Sam-Fedel-Farms-Agriculture-Services-/admin.html" />
   <meta name="google-site-verification" content="7d8177cdda59d81f" />
+  <script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
   <style>
     body { padding: 28px; background: #050805; color: #eaf8ea; }
     .admin-wrap { max-width: 980px; margin: 0 auto; }
@@ -171,7 +172,12 @@ function renderGallery(){
   const grid = document.getElementById('galleryGrid'); if(!grid) return; grid.innerHTML=''; const meta = loadGalleryMeta();
   galleryFiles.forEach((f, i)=>{
     const wrap = document.createElement('div'); wrap.style.padding='6px'; wrap.style.display='inline-block'; wrap.style.width='180px'; wrap.style.verticalAlign='top';
-    const img = document.createElement('img'); img.src = encodeURI(f); img.alt = 'gallery '+(i+1); img.style.width='100%'; img.style.borderRadius='10px'; img.style.border='2px solid rgba(255,255,255,0.04)'; img.loading='lazy';
+    const img = document.createElement('img');
+    img.setAttribute('data-src', encodeURI(f));
+    img.classList.add('lozad');
+    img.alt = 'gallery '+(i+1);
+    img.style.width='100%'; img.style.borderRadius='10px'; img.style.border='2px solid rgba(255,255,255,0.04)';
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///ywAAAAAAQABAAACAUwAOw==';
     const controls = document.createElement('div'); controls.style.marginTop='6px'; controls.style.display='flex'; controls.style.justifyContent='space-between';
     const label = document.createElement('label'); label.style.fontSize='0.9rem'; label.style.color='#dff6d8';
     const checkbox = document.createElement('input'); checkbox.type='checkbox'; checkbox.checked = !!meta[f]; checkbox.addEventListener('change', ()=>{ const m = loadGalleryMeta(); if(checkbox.checked) m[f]=true; else delete m[f]; saveGalleryMeta(m); renderGallery(); });
@@ -183,7 +189,22 @@ function renderGallery(){
 }
 
 // Init
-document.addEventListener('DOMContentLoaded', ()=>{ renderInventory(); renderGallery(); });
+document.addEventListener('DOMContentLoaded', ()=>{ 
+  renderInventory(); 
+  renderGallery();
+  // init lozad for admin thumbnails
+  if (typeof lozad !== 'undefined') {
+    try {
+      const adminLozad = lozad('.lozad', { loaded: el => el.classList.add('loaded') });
+      adminLozad.observe();
+      // trigger first few thumbnails
+      setTimeout(()=>{
+        const imgs = document.querySelectorAll('#galleryGrid img.lozad');
+        for (let i=0;i<Math.min(4, imgs.length); i++) adminLozad.trigger(imgs[i]);
+      }, 60);
+    } catch(e) { console.warn('admin lozad init failed', e); }
+  }
+});
 
 // --- GitHub publish helpers ---
 async function publishInventoryToGitHub(token, owner, repo, path) {

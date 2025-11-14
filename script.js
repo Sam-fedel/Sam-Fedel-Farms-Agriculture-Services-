@@ -274,6 +274,28 @@ document.addEventListener('DOMContentLoaded', () => {
     renderInventory();
     // Apply gallery featured metadata when page loads
     applyGalleryMeta();
+
+    // Initialize lozad lazy loader if available
+    if (typeof lozad !== 'undefined') {
+        try {
+            window.lozadObserver = lozad('.lozad', {
+                loaded: function(el) { el.classList.add('loaded'); }
+            });
+            window.lozadObserver.observe();
+            // pre-load first slide and its neighbor for smoother carousel experience
+            setTimeout(() => {
+                const first = document.querySelector('#carousel .carousel-slide img.lozad');
+                if (first && window.lozadObserver && window.lozadObserver.trigger) {
+                    window.lozadObserver.trigger(first);
+                    const next = first.closest('.carousel-track').children[1];
+                    if (next) {
+                        const nimg = next.querySelector('img.lozad');
+                        if (nimg) window.lozadObserver.trigger(nimg);
+                    }
+                }
+            }, 80);
+        } catch (e) { console.warn('lozad init failed', e); }
+    }
 });
 
 // BroadcastChannel listener for admin updates (real-time sync)
@@ -347,6 +369,16 @@ function initCarousel() {
     function moveToSlide(index) {
         currentIndex = (index + slides.length) % slides.length;
         updateTrack();
+        // trigger lozad to load the current and adjacent slides for snappy navigation
+        try {
+            if (window.lozadObserver && window.lozadObserver.trigger) {
+                const idxs = [currentIndex, (currentIndex + 1) % slides.length, (currentIndex - 1 + slides.length) % slides.length];
+                idxs.forEach(i => {
+                    const img = slides[i] && slides[i].querySelector('img.lozad');
+                    if (img) window.lozadObserver.trigger(img);
+                });
+            }
+        } catch (err) { /* ignore */ }
     }
 
     function next() { moveToSlide(currentIndex + 1); }

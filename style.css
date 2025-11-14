@@ -233,6 +233,10 @@ section {
     .carousel-track { transition: none !important; }
 }
 
+/* lozad placeholder styling and blur-up effect */
+.lozad { display:block; width:100%; opacity:0.92; filter: blur(12px); transition: filter 600ms ease, opacity 400ms ease; }
+.lozad.loaded { filter: blur(0); opacity:1; }
+
 /* Fade-in sections (observer toggles 'fade-in') */
 .fade-section {
     opacity: 0;
