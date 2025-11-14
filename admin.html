@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>Admin — Sam Fedel Farms</title>
   <link rel="stylesheet" href="style.css">
-  <link rel="canonical" href="https://sam-fedel.github.io/Sam-Fedel-Farms-Agriculture-Services-/admin.html" />
+  <link rel="canonical" href="https://sam-fedel.github.io/Sam-Fedel-Farms-Agricultural-Services-/admin.html" />
   <meta name="google-site-verification" content="7d8177cdda59d81f" />
   <script src="https://cdn.jsdelivr.net/npm/lozad/dist/lozad.min.js"></script>
   <style>
@@ -43,7 +43,7 @@
       <div style="margin-top:10px;" class="muted small">Publish inventory to GitHub (optional):</div>
       <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;">
         <input id="ghOwner" type="text" placeholder="owner (github)" value="sam-fedel" style="padding:8px;border-radius:8px;min-width:140px;">
-        <input id="ghRepo" type="text" placeholder="repo name" value="Sam-Fedel-Farms-Agriculture-Services-" style="padding:8px;border-radius:8px;min-width:260px;">
+        <input id="ghRepo" type="text" placeholder="repo name" value="Sam-Fedel-Farms-Agricultural-Services-" style="padding:8px;border-radius:8px;min-width:260px;">
         <input id="ghPath" type="text" placeholder="file path (inventory.json)" value="inventory.json" style="padding:8px;border-radius:8px;min-width:160px;">
         <input id="ghToken" type="password" placeholder="GitHub token (kept local)" style="padding:8px;border-radius:8px;min-width:240px;">
         <button id="publishBtn" class="btn">Publish to GitHub</button>
@@ -53,7 +53,7 @@
           <h3>Safer publish (no token required)</h3>
           <p class="small muted">If you prefer not to paste a Personal Access Token in the browser, you can publish by uploading a file named <code>inventory-source.json</code> to a branch called <code>inventory-updates</code> in this repository. A GitHub Actions workflow will automatically copy that file to <code>inventory.json</code> on the <code>main</code> branch and make it live on the site.</p>
           <ol>
-            <li>Go to your repository on GitHub: <code>https://github.com/sam-fedel/Sam-Fedel-Farms-Agriculture-Services-</code></li>
+            <li>Go to your repository on GitHub: <code>https://github.com/sam-fedel/Sam-Fedel-Farms-Agricultural-Services-</code></li>
             <li>Click <strong>Add file → Upload files</strong>, choose your <code>inventory-source.json</code>, and set the branch to <code>inventory-updates</code> (create it if necessary).</li>
             <li>Commit the file; the GitHub Actions workflow will run and update <code>inventory.json</code> on <code>main</code>.</li>
             <li>Visitors will receive the published inventory automatically (the site polls every 30s).</li>

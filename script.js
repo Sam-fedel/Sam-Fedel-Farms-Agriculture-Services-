@@ -427,7 +427,7 @@ document.addEventListener('DOMContentLoaded', () => {
 /* Remote inventory polling (optional): fetch inventory.json from GitHub Pages and apply so everyone sees published changes.
    This will try the provided GitHub Pages URL and, if successful, overwrite the local inventory used for display.
 */
-const REMOTE_INVENTORY_URL = 'https://sam-fedel.github.io/Sam-Fedel-Farms-Agriculture-Services-/inventory.json';
+const REMOTE_INVENTORY_URL = 'https://sam-fedel.github.io/Sam-Fedel-Farms-Agricultural-Services-/inventory.json';
 async function fetchAndApplyRemoteInventory() {
     try {
         const res = await fetch(REMOTE_INVENTORY_URL, { cache: 'no-store' });

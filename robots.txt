@@ -5,4 +5,4 @@ User-agent: *
 Allow: /
 
 # Point crawlers to the sitemap
-Sitemap: https://sam-fedel.github.io/Sam-Fedel-Farms-Agriculture-Services-/sitemap.xml
+Sitemap: https://sam-fedel.github.io/Sam-Fedel-Farms-Agricultural-Services-/sitemap.xml
