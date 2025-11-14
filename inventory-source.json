@@ -3,5 +3,5 @@
   { "name": "Peppers", "inStock": true },
   { "name": "Fish Fingerlings", "inStock": false },
   { "name": "Broiler Chicks", "inStock": false },
-  { "name": "Snail Rearing (stock)", "inStock": false }
+  { "name": "Snail Rearing (stock)", "inStock": true}
 ]
